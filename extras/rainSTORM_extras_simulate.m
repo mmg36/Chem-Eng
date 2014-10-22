@@ -52,7 +52,7 @@ rng('shuffle')               % Start a random number sequence (see 'rng')
 flag1p               = 0;    % Simulate a single dye molecule
 flag2D               = 1;    % True: all z-posits = 0. False: 'inclined' Z
 
-flagSaveTifs         = 0;    % Save grayscale tif frames
+flagSaveTifs         = 1;    % Save grayscale tif frames
 flagShowCCDImages    = 1;    % Show simulated frame on screen (slow)
 
 flagGaussianNoise    = 1;    % Add Gaussian "camera noise" to ccdSignal
@@ -62,9 +62,6 @@ flagQuantumPoisson   = 1;    % Convert expected photon number to Poisson variate
 % 1. Import a "true object" and set parameters
 readDir  = '';
 readFile = 'crossed_lines2.png'; % C:\Documents and Settings\ejr36\My Documents\Projects\2011_3D_Anisotropic_STORM\2011_11_29_3Dstorm\crossed_lines.png
-% This can potentially be changed to a better version - if the working
-% directory of the user is not the same as the installation file then code
-% will not run. Maybe change this? 
 readIn   = [readDir, readFile];
 
 trueObj = imread(readIn);
@@ -219,8 +216,7 @@ for lpIm = 1:numberOfImages
   % Save image as a tif 
   if(flagSaveTifs)
   imageCCD = uint16(imageCCD); % Vista Preview dislikes 16-bit.. ImageJ OK
-  tifName = ['C:\Documents and Settings\ejr36\My Documents\Work_Papers\2013JoOptics\Matlab\image',int2str(lpIm),'.tif'];
-  % again the same poblem here with saving the file 
+  tifName = ['C:\Users\user\Desktop\results\image',int2str(lpIm),'.tif'];
   % Write as tif. Note that "append" mode is N^2 slow; avoid if possible.
   imwrite(imageCCD,tifName,'tif'); %,'writemode', 'append'); 
   % Don't use 'writemode', 'append' - stacking in ImageJ is faster

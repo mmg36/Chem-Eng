@@ -1,63 +1,3 @@
-% rainSTORM_extras_simulate_3D_BW
-% Eric Rees 17 May 2013  
-%
-% Later Edits
-%   None yet
-%
-% Function
-%   Simulates molecular diffusion imaging data for Localisation Microscopy
-%   Modified from rainSTORM_extras_simulate.m in V2.32
-%
-% Motivation
-%   Demonstrate and explore forward-simulation of diffusion imaging
-%   Generate data for validation and testing of diffusion analysis methods
-%
-% Further Reading
-%   Einstein 1905 Brownian Motion
-%   Thompson 2002 Biophys J 
-%   Savin and Doyle 2005 Biophys J
-%   Crocker and Grier 199(2)
-%
-% Outline of this program
-%   0. Flow Control
-%   1. Define input: one or more static or moving molecules, and CCD size
-%   2. Simulate molecular diffusion imaging data
-%   3. Outputs: TIFs
-% 
-% Notes
-%   The folder of individual TIFs can be assembled into a stack by ...
-%     dropping the folder onto the ImageJ bar.
-%   Molecules can drift off-camera in a slightly non-physical way.
-%     For now, avoid generating this kind of data by keeping dyes mid-CCD.
-%   The dimensions used in this simualtion are nanometres and seconds
-%   A later simulation will consider time-correlated fluorescence
-%   The hard-coded boxcar window in the PSF simulation is a flaw
-%     But it seems insignificant for the default widths !!
-
-
-% 0. Set flow control for the simulation
-close all                    % Close figures
-rng('shuffle')               % Start a random number sequence (see 'rng')
-
-% Initial conditions
-flagOneMol           = 1;    % Setup simulation with one dye molecule
-flagTwoMol           = 0;    % Alternative. Simulation of 2 molecules
-flagMultiMol         = 0;    % Alternative. Simulation of many molecules
-flagMultiMolBrowDis  = 0;    % Alternative. Multi mols, distinct D's
-flagTimeCorrBlinks   = 0;    % Alternative. See below for details. 
-
-% Purely in-loop simulation conditions
-flagBrownianConst    = 1;    % Molecule(s) move with Brownian diffusion
-
-% 3D options
-flag2D               = 1;    % True: all z-positions are zero
-
-% Output options
-flagSaveTifs         = 0;    % Save grayscale tif frames
-flagShowCCDImages    = 1;    % Show simulated frames on screen (IS SLOW!)
-
-writeFile = 'C:\simulations\2013_DiffusionSims\image'; % Save images here
-
 
 % 1. Initialise simulation parameters
 
@@ -74,13 +14,13 @@ flagQuantumPoisson   = 1;    % Convert expected photon number to a Poisson
   dyeFraction        = 1;      % Fraction of time spent in "bright" state
 % dyeFraction        = 0.1;    % Blinking
 
-dyePhotons           = 1000;   % Expected photons captured per whole frame
+dyePhotons           = 1000*photonFrac;   % Expected photons captured per whole frame
 noiseGaussianMean    = 100;    % d.c. background level of camera (counts)
 noiseGaussianSigma   = 10;     % std dev of noise is 'b' in Thompson-2002
 noisePoissonMean     = 0;      % Best set to zero for simplicity
 
 % Diffusion or dynamic properties
-dyeBrownianD         = 1E6;    % Diffusivity (Brownian), nm^2/s
+dyeBrownianD         = 0;    % Diffusivity (Brownian), nm^2/s
 cameraCycleTime      = 0.040;  % Camera cycle time, seconds
 
 brownianSigX         = sqrt(2*dyeBrownianD*cameraCycleTime); % in each Dim!
@@ -103,69 +43,6 @@ if(flagOneMol)
   dyeObPosRow = 33;
   dyeObPosCol = 31;
 end
-
-% The following section sets up a two-molecule simulation, with:
-%   Molecule Positions
-%   Camera grid size
-if(flagTwoMol) 
-  simGridSize  = [128, 128];       % size of a "Simulation Grid" space 
-  pxSimGrid    = 160;            % nm per unit of "Simulation Grid"
-
-  rescale  = 1;                  % rescale simulation grid to camera pixels
-  pxCCD    = pxSimGrid*rescale;  % nm width of CCD pixels
-  ccdGridSize = simGridSize./rescale;
-  
-  ccdEdgesRow = 0 : pxCCD : pxSimGrid*simGridSize(1);
-  ccdEdgesCol = 0 : pxCCD : pxSimGrid*simGridSize(2);  
-
-  dyeObPosRow = [43, 45];
-  dyeObPosCol = [80, 80];
-end
-
-% The following section sets up a multi-molecule simulation
-%   Random Molecule Positions within the middle of the field of view
-%   Camera grid size
-if(flagMultiMol) 
-  simGridSize  = [64, 64];       % size of a "Simulation Grid" space 
-  pxSimGrid    = 160;            % nm per unit of "Simulation Grid"
-
-  rescale  = 1;                  % rescale simulation grid to camera pixels
-  pxCCD    = pxSimGrid*rescale;  % nm width of CCD pixels
-  ccdGridSize = simGridSize./rescale;
-  
-  ccdEdgesRow = 0 : pxCCD : pxSimGrid*simGridSize(1);
-  ccdEdgesCol = 0 : pxCCD : pxSimGrid*simGridSize(2);  
-  
-  numberOfMolecules = 6;
-  
-  dyeObPosRow = 10 + rand( numberOfMolecules , 1)*40;
-  dyeObPosCol = 10 + rand( numberOfMolecules , 1)*40;
-end
-
-% The following section sets up
-%   Some molecules at random positions
-%   And this setup is meant to be used with a time-correlated blinking 
-%   behaviour, designed below. 
-if (flagTimeCorrBlinks)
-  simGridSize  = [64, 64];       % size of a "Simulation Grid" space 
-  pxSimGrid    = 160;            % nm per unit of "Simulation Grid"
-
-  rescale  = 1;                  % rescale simulation grid to camera pixels
-  pxCCD    = pxSimGrid*rescale;  % nm width of CCD pixels
-  ccdGridSize = simGridSize./rescale;
-  
-  ccdEdgesRow = 0 : pxCCD : pxSimGrid*simGridSize(1);
-  ccdEdgesCol = 0 : pxCCD : pxSimGrid*simGridSize(2);  
-  
-  numberOfMolecules = 6;
-  
-  dyeObPosRow = 10 + rand( numberOfMolecules , 1)*40;
-  dyeObPosCol = 10 + rand( numberOfMolecules , 1)*40;
-  
-  dyePersistenceChance = 0.5; % Probability an active dye continues
-end
-
-
 
 
 % Determine Z-positions of dye molecules. This may be needed for 3D.
