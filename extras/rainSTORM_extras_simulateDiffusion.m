@@ -40,11 +40,11 @@ close all                    % Close figures
 rng('shuffle')               % Start a random number sequence (see 'rng')
 
 % Initial conditions
-flagOneMol           = 1;    % Setup simulation with one dye molecule
+flagOneMol           = 0;    % Setup simulation with one dye molecule
 flagTwoMol           = 0;    % Alternative. Simulation of 2 molecules
 flagMultiMol         = 0;    % Alternative. Simulation of many molecules
 flagMultiMolBrowDis  = 0;    % Alternative. Multi mols, distinct D's
-flagTimeCorrBlinks   = 0;    % Alternative. See below for details. 
+flagTimeCorrBlinks   = 1;    % Alternative. See below for details. 
 
 % Purely in-loop simulation conditions
 flagBrownianConst    = 1;    % Molecule(s) move with Brownian diffusion
@@ -53,7 +53,7 @@ flagBrownianConst    = 1;    % Molecule(s) move with Brownian diffusion
 flag2D               = 1;    % True: all z-positions are zero
 
 % Output options
-flagSaveTifs         = 0;    % Save grayscale tif frames
+flagSaveTifs         = 1;    % Save grayscale tif frames
 flagShowCCDImages    = 1;    % Show simulated frames on screen (IS SLOW!)
 
 writeFile = 'C:\simulations\2013_DiffusionSims\image'; % Save images here
@@ -80,7 +80,7 @@ noiseGaussianSigma   = 10;     % std dev of noise is 'b' in Thompson-2002
 noisePoissonMean     = 0;      % Best set to zero for simplicity
 
 % Diffusion or dynamic properties
-dyeBrownianD         = 1E6;    % Diffusivity (Brownian), nm^2/s
+dyeBrownianD         = 1E7;    % Diffusivity (Brownian), nm^2/s
 cameraCycleTime      = 0.040;  % Camera cycle time, seconds
 
 brownianSigX         = sqrt(2*dyeBrownianD*cameraCycleTime); % in each Dim!
