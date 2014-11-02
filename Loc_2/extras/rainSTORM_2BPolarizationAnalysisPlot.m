@@ -22,6 +22,6 @@ hold on
 axis([-5 50 -5 50])
 xlabel('Real polarisation angle (degrees)');
 ylabel('Calculated polarisation angle (degrees)');
-errorbar(PhiPlot(:,1),PhiPlot(:,2),PhiPlot(:,3),'*');
-plot (PhiPlot(:,1), PhiPlot(:,1),'--');
+errorbar(PhiPlot(:,1),PhiPlot(:,2),PhiPlot(:,3),'--*');
+plot (PhiPlot(:,1), PhiPlot(:,1),'--r');
 hold off
