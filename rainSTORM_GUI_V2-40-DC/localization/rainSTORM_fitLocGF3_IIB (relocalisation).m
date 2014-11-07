@@ -5,11 +5,6 @@
 function [SupResParams] = rainSTORM_fitLocGF3(frameIdx, myFrame,myPixels,initX0,initSig,allowSig,rad,tol,allowX,bkgdSig,maxIts)
 %function [myFits,myParams] = rainSTORM_fitLocGF3(frameIdx, myFrame,myPixels,initX0,initSig,allowSig,rad,tol,allowX,bkgdSig,maxIts)
 persistent Nfails 
-
-% Determine if main localisation algorith will use old method (subtract
-% minimum of ROI) of the new method (subtract average of NON-ROI).
-FlagFitAverage= 0;
-
 % Fit [x0,C,sigX] to make f(x)=C*exp( -(x-x0)^2/(2*sigX^2) ) 
 % Work on rows then cols. Reject fits with far-out x0, sigX, or residual.
 
@@ -23,25 +18,7 @@ for lpPx = 1:size(myPixels,1); % For local maxima in descending order
 myRow = myPixels(lpPx,1);
 myCol = myPixels(lpPx,2);
 myROI = myFrame(myRow-rad:myRow+rad,myCol-rad:myCol+rad); 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% "Old method"
-
-if FlagFitAverage == 0 ;
-    myROI = myROI - min(myROI(:));  % square region to fit. Subtract minimum.
-   % 'old method'
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% New method 
-%This part only works with one molecule!
-if FlagFitAverage == 1;
-   ResBackground =(sum(sum(myFrame))-sum(sum(myROI)))/((size(myFrame,1)^2)-(size(myROI,1)^2)); % Background is average count outside ROI.
-   myROI = myROI - ResBackground;
-   % 'new method'
-end            
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+myROI = myROI - min(myROI(:));  % square region to fit. Subtract minimum.
 flagRowFits = false;   % Begin by noting the centre-position is not fitted
 flagColFits = false;
 
